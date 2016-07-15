@@ -180,10 +180,18 @@ exports.vehicles = function vehicles(options, callback) {
         if (error)
             err(error);
 
+        if( response.statusCode != 200 ) {
+            log(API_REQUEST_LEVEL, "\nResponse statuscode: " + response.statusCode)
+            callback( undefined, response.headers )
+            return
+        }
+
         try {
             var data = JSON.parse(body);
         } catch (e) {
             err('Error parsing vehicles response');
+            callback( undefined, e )
+            return
         }
 
         data = data.response[options.carIndex || 0];
