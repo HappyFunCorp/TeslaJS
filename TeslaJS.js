@@ -9,8 +9,32 @@
 // Refer to included LICENSE file for usage rights and restrictions
 //=====================================================================
 
-var request = require('request');
-var colors = require('colors');
+// var request = 
+require('isomorphic-fetch')
+var FormData = require( 'form-data' )
+// var request = fetch
+// var colors = require('colors');
+
+function request( req, callback ) {
+    req.headers = new Headers( req.headers )
+    if( req.form ) {
+        req.body = new FormData()
+        for( let data in req.form ) {
+            req.body.append( data, req.form[data])
+        }
+        delete req['form']
+        console.log( req )
+    }
+    console.log( "Loading", req.url)
+    fetch( req.url, req).then( (response) => {
+        response.text().then( (text) => {
+            return callback( undefined, response, text );            
+        })
+    } ).catch(function(error) {
+        console.log( "Error", error )
+        callback( error )
+    });
+}
 
 //=======================
 // Streaming API portal
@@ -87,14 +111,16 @@ exports.getPortalBaseURI = function getPortalBaseURI() {
 // Log error messages to the console
 //==================================
 function err(str) {
-    console.error(str.red);
+    console.error(str);
+    // console.error(str.red);
 }
 
 //===============================================
 // Login to the server and receive an OAuth token
 //===============================================
 exports.login = function login(username, password, callback) {
-    log(API_CALL_LEVEL, "TeslaJS.login()".cyan);
+    // log(API_CALL_LEVEL, "TeslaJS.login()".cyan);
+    log(API_CALL_LEVEL, "TeslaJS.login()");
 
     if (!callback)
         callback = function (result) { /* do nothing! */}
@@ -111,11 +137,13 @@ exports.login = function login(username, password, callback) {
         }
     };
 
-    log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
+    log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req));
+    // log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
 
     request(req, function (error, response, body) {
 
-        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(body).magenta);
+        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(body));
+        // log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(body).magenta);
 
         var authToken;
 
@@ -128,7 +156,8 @@ exports.login = function login(username, password, callback) {
 
         callback({ error: error, response: response, body: body, authToken: authToken });
 
-        log(API_RETURN_LEVEL, "TeslaJS.login() completed.".cyan);
+        // log(API_RETURN_LEVEL, "TeslaJS.login() completed.".cyan);
+        log(API_RETURN_LEVEL, "TeslaJS.login() completed.");
     });
 }
 
@@ -136,14 +165,16 @@ exports.login = function login(username, password, callback) {
 // Invalidate the current auth token
 //==================================
 exports.logout = function logout(authToken, callback) {
-    log(API_CALL_LEVEL, "TeslaJS.logout()".cyan);
+    // log(API_CALL_LEVEL, "TeslaJS.logout()".cyan);
+    log(API_CALL_LEVEL, "TeslaJS.logout()");
 
     if (!callback)
         callback = function (result) { /* do nothing! */ }
 
     callback({ error: "Not implemented!", response: "Not implemented!", body: "Not implemented!" });
 
-    log(API_RETURN_LEVEL, "TeslaJS.logout() completed.".cyan);
+    // log(API_RETURN_LEVEL, "TeslaJS.logout() completed.".cyan);
+    log(API_RETURN_LEVEL, "TeslaJS.logout() completed.");
 
 /*
     request({
@@ -163,7 +194,8 @@ exports.logout = function logout(authToken, callback) {
 // Return vehicle information on the requested vehicle
 //====================================================
 exports.vehicles = function vehicles(options, callback) {
-    log(API_CALL_LEVEL, "TeslaJS.vehicles()".cyan);
+    // log(API_CALL_LEVEL, "TeslaJS.vehicles()".cyan);
+    log(API_CALL_LEVEL, "TeslaJS.vehicles()");
 
     if (!callback)
         callback = function (vehicle) { /* do nothing! */ }
@@ -174,17 +206,20 @@ exports.vehicles = function vehicles(options, callback) {
         headers: { Authorization: "Bearer " + options.authToken, 'Content-Type': 'application/json; charset=utf-8' }
     };
 
-    log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
+    log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req));
+    // log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
 
     request(req, function (error, response, body) {
         if (error)
             err(error);
 
-        if( response.statusCode != 200 ) {
-            log(API_REQUEST_LEVEL, "\nResponse statuscode: " + response.statusCode)
-            callback( undefined, response.headers )
+        if( response.status != 200 ) {
+            log(API_REQUEST_LEVEL, "\nResponse statuscode: " + response.status)
+            callback( undefined, response )
             return
         }
+
+        console.log( "body", body)
 
         try {
             var data = JSON.parse(body);
@@ -197,11 +232,13 @@ exports.vehicles = function vehicles(options, callback) {
         data = data.response[options.carIndex || 0];
         data.id = data.id_s;
 
-        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
+        // log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
+        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data));
 
         callback(data);
 
-        log(API_RETURN_LEVEL, "\nGET request: " + "/vehicles".cyan + " completed.");
+        // log(API_RETURN_LEVEL, "\nGET request: " + "/vehicles".cyan + " completed.");
+        log(API_RETURN_LEVEL, "\nGET request: " + "/vehicles" + " completed.");
     });
 }
 
@@ -209,7 +246,8 @@ exports.vehicles = function vehicles(options, callback) {
 // Generic REST call for GET commands
 //====================================
 function get_command(options, command, callback) {
-    log(API_CALL_LEVEL, "GET call: " + command.cyan + " start.");
+    // log(API_CALL_LEVEL, "GET call: " + command.cyan + " start.");
+    log(API_CALL_LEVEL, "GET call: " + command + " start.");
 
     if (!callback)
         callback = function (data) { /* do nothing! */ }
@@ -220,7 +258,8 @@ function get_command(options, command, callback) {
         headers: { Authorization: "Bearer " + options.authToken, 'Content-Type': 'application/json; charset=utf-8'}
     };
 
-    log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
+    log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req));
+    // log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
 
     request(req, function (error, response, body) {
 
@@ -236,11 +275,13 @@ function get_command(options, command, callback) {
 
         data = data.response;
 
-        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
+        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data));
+        // log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
 
         callback(data);
 
-        log(API_RETURN_LEVEL, "\nGET request: " + command.cyan + " completed.");
+        // log(API_RETURN_LEVEL, "\nGET request: " + command.cyan + " completed.");
+        log(API_RETURN_LEVEL, "\nGET request: " + command + " completed.");
     });
 }
 
@@ -248,7 +289,8 @@ function get_command(options, command, callback) {
 // Generic REST call for POST commands
 //====================================
 function post_command(options, command, body, callback) {
-    log(API_CALL_LEVEL, "POST call: " + command.cyan + " start.");
+    // log(API_CALL_LEVEL, "POST call: " + command.cyan + " start.");
+    log(API_CALL_LEVEL, "POST call: " + command + " start.");
 
     if (!callback)
         callback = function (data) { /* do nothing! */ }
@@ -260,7 +302,8 @@ function post_command(options, command, body, callback) {
         form: body || null
     };
 
-    log(API_BODY_LEVEL, "\nRequest: " + JSON.stringify(cmd).green);
+    // log(API_BODY_LEVEL, "\nRequest: " + JSON.stringify(cmd).green);
+    log(API_BODY_LEVEL, "\nRequest: " + JSON.stringify(cmd));
 
     request(cmd, function (error, response, body) {
 
@@ -275,11 +318,13 @@ function post_command(options, command, body, callback) {
 
         data = data.response;
 
-        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
+        // log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
+        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data));
 
         callback(data);
 
-        log(API_RETURN_LEVEL, "\nPOST command: " + command.cyan + " completed.");
+        // log(API_RETURN_LEVEL, "\nPOST command: " + command.cyan + " completed.");
+        log(API_RETURN_LEVEL, "\nPOST command: " + command + " completed.");
     });
 }
 
@@ -606,7 +651,8 @@ exports.startStreaming = function startStreaming(options, callback) {
         }
     };
 
-    log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
+    // log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
+    log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req));
 
     request(req, callback);
 }
