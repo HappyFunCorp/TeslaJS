@@ -11,6 +11,7 @@
 
 // var request = 
 // require('isomorphic-fetch')
+var fetch = global.fetch;
 var FormData = require('form-data');
 // var request = fetch
 // var colors = require('colors');
