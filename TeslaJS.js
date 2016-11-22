@@ -9,31 +9,28 @@
 // Refer to included LICENSE file for usage rights and restrictions
 //=====================================================================
 
-// var request = 
+// var request =
 // require('isomorphic-fetch')
 var fetch = global.fetch;
 var FormData = require('form-data');
 // var request = fetch
 // var colors = require('colors');
 
-function request( req, callback ) {
-    req.headers = new Headers( req.headers )
-    if( req.form ) {
-        req.body = new FormData()
-        for( let data in req.form ) {
-            req.body.append( data, req.form[data])
-        }
-        delete req['form']
-        console.log( req )
-    }
-    console.log( "Loading", req.url)
-    fetch( req.url, req).then( (response) => {
-        response.text().then( (text) => {
-            return callback( undefined, response, text );            
-        })
-    } ).catch(function(error) {
-        console.log( "Error", error )
-        callback( error )
+function request(req, callback) {
+  req.headers = new Headers(req.headers);
+  if (req.form) {
+    req.body = JSON.stringify(req.form);
+    delete req['form'];
+    console.log(req);
+  }
+  fetch(req.url, req)
+    .then((response) => {
+      response.text().then((text) => {
+        return callback(undefined, response, text);
+      })
+    })
+    .catch(function(error) {
+      callback(error);
     });
 }
 
