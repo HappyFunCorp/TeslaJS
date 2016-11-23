@@ -19,9 +19,16 @@ var FormData = require('form-data');
 function request(req, callback) {
   req.headers = new Headers(req.headers);
   if (req.form) {
-    req.body = JSON.stringify(req.form);
+    // Hacky fix for login. Find a better way later.
+    if (req.url.indexOf("/oauth/token") !== -1) {
+      req.body = new FormData()
+      for (let data in req.form) {
+        req.body.append(data, req.form[data]);
+      }
+    } else {
+      req.body = JSON.stringify(req.form);
+    }
     delete req['form'];
-    console.log(req);
   }
   fetch(req.url, req)
     .then((response) => {
@@ -32,6 +39,19 @@ function request(req, callback) {
     .catch(function(error) {
       callback(error);
     });
+
+  req.headers = new Headers( req.headers )
+  if( req.form ) {
+  }
+  console.log( "Loading", req.url)
+  fetch( req.url, req).then( (response) => {
+    response.text().then( (text) => {
+      return callback( undefined, response, text );
+    })
+  } ).catch(function(error) {
+    console.log( "Error", error )
+    callback( error )
+  });
 }
 
 //=======================
