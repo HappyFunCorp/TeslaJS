@@ -247,7 +247,21 @@ exports.vehicles = function vehicles(options, callback) {
             return
         }
 
-        data = data.response[options.carIndex || 0];
+        if (options.carVin) {
+          let index = 0; //default to first car if we can't find a match for vin
+          for (i = 0; i < data.response.length; i++) {
+            if (data.response[i].vin == options.carVin) {
+              index = i;
+              break;
+            }
+          }
+          console.log( "lookup by VIN", options.carVin, index);
+          data = data.response[index];
+        }
+        else {
+          data = data.response[options.carIndex || 0];
+        }
+
         data.id = data.id_s;
 
         // log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
