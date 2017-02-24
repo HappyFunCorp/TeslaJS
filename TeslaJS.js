@@ -212,7 +212,6 @@ exports.logout = function logout(authToken, callback) {
 // Return vehicle information on the requested vehicle
 //====================================================
 exports.vehicles = function vehicles(options, callback) {
-    // log(API_CALL_LEVEL, "TeslaJS.vehicles()".cyan);
     log(API_CALL_LEVEL, "TeslaJS.vehicles()");
 
     if (!callback)
@@ -225,52 +224,42 @@ exports.vehicles = function vehicles(options, callback) {
     };
 
     log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req));
-    // log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
 
     request(req, function (error, response, body) {
         if (error)
             err(error);
 
-        if( response.status != 200 ) {
-            log(API_REQUEST_LEVEL, "\nResponse statuscode: " + response.status)
-            callback( undefined, response )
-            return
-        }
+      log(API_BODY_LEVEL, "\nBody: " + JSON.stringify(body));
+      log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(response));
 
-        console.log( "body", body)
+      var data = {};
 
-        try {
-            var data = JSON.parse(body);
-        } catch (e) {
-            err('Error parsing vehicles response');
-            callback( undefined, e )
-            return
-        }
-
-        if (options.carVin) {
-          let index = 0; //default to first car if we can't find a match for vin
-          for (i = 0; i < data.response.length; i++) {
-            if (data.response[i].vin == options.carVin) {
-              index = i;
-              break;
+      try {
+          data = JSON.parse(body);
+          if (options.carVin) {
+            let index = 0; //default to first car if we can't find a match for vin
+            for (i = 0; i < data.response.length; i++) {
+              if (data.response[i].vin == options.carVin) {
+                index = i;
+                break;
+              }
             }
+            console.log( "lookup by VIN", options.carVin, index);
+            data = data.response[index];
           }
-          console.log( "lookup by VIN", options.carVin, index);
-          data = data.response[index];
-        }
-        else {
-          data = data.response[options.carIndex || 0];
-        }
+          else {
+            data = data.response[options.carIndex || 0];
+          }
 
-        data.id = data.id_s;
+          data.id = data.id_s;
 
-        // log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
-        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data));
-
-        callback(data);
-
-        // log(API_RETURN_LEVEL, "\nGET request: " + "/vehicles".cyan + " completed.");
-        log(API_RETURN_LEVEL, "\nGET request: " + "/vehicles" + " completed.");
+          callback(data);
+      } catch (e) {
+          err('Error parsing vehicles response');
+          callback( undefined, e )
+          return
+      }
+      log(API_RETURN_LEVEL, "\nGET request: " + "/vehicles" + " completed.");
     });
 }
 
