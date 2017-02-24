@@ -278,7 +278,6 @@ exports.vehicles = function vehicles(options, callback) {
 // Generic REST call for GET commands
 //====================================
 function get_command(options, command, callback) {
-    // log(API_CALL_LEVEL, "GET call: " + command.cyan + " start.");
     log(API_CALL_LEVEL, "GET call: " + command + " start.");
 
     if (!callback)
@@ -291,28 +290,26 @@ function get_command(options, command, callback) {
     };
 
     log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req));
-    // log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req).green);
 
     request(req, function (error, response, body) {
+      if (error)
+        err(error);
 
-        if (error)
-            err(error);
+      log(API_BODY_LEVEL, "\nBody: " + JSON.stringify(body));
+      log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(response));
 
-        try {
-            var data = JSON.parse(body);
-        } catch (e) {
-            err('Error parsing response');
-            err(body);
-        }
+      var data = {};
 
+      try {
+        data = JSON.parse(body);
         data = data.response;
 
-        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data));
-        // log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
-
         callback(data);
+      } catch (e) {
+        err('Error parsing GET call response');
+        callback(null);
+      }
 
-        // log(API_RETURN_LEVEL, "\nGET request: " + command.cyan + " completed.");
         log(API_RETURN_LEVEL, "\nGET request: " + command + " completed.");
     });
 }
@@ -321,7 +318,6 @@ function get_command(options, command, callback) {
 // Generic REST call for POST commands
 //====================================
 function post_command(options, command, body, callback) {
-    // log(API_CALL_LEVEL, "POST call: " + command.cyan + " start.");
     log(API_CALL_LEVEL, "POST call: " + command + " start.");
 
     if (!callback)
@@ -334,29 +330,28 @@ function post_command(options, command, body, callback) {
         form: body || null
     };
 
-    // log(API_BODY_LEVEL, "\nRequest: " + JSON.stringify(cmd).green);
     log(API_BODY_LEVEL, "\nRequest: " + JSON.stringify(cmd));
 
     request(cmd, function (error, response, body) {
+      if (error)
+        err(error);
 
-        if (error)
-            err(error);
+      log(API_BODY_LEVEL, "\nBody: " + JSON.stringify(body));
+      log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(response));
 
-        try {
-            var data = JSON.parse(body);
-        } catch (e) {
-            err('Error parsing response');
-        }
+      var data = {};
 
+      try {
+        data = JSON.parse(body);
         data = data.response;
 
-        // log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data).magenta);
-        log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(data));
-
         callback(data);
+      } catch (e) {
+        err('Error parsing POST call response');
+        callback(null);
+      }
 
-        // log(API_RETURN_LEVEL, "\nPOST command: " + command.cyan + " completed.");
-        log(API_RETURN_LEVEL, "\nPOST command: " + command + " completed.");
+      log(API_RETURN_LEVEL, "\nPOST command: " + command + " completed.");
     });
 }
 
