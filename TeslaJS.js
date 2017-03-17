@@ -226,8 +226,10 @@ exports.vehicles = function vehicles(options, callback) {
     log(API_REQUEST_LEVEL, "\nRequest: " + JSON.stringify(req));
 
     request(req, function (error, response, body) {
-        if (error)
-            err(error);
+      if (error) {
+        log(API_ERR_LEVEL, error);
+        return callback(error, null);
+      }
 
       log(API_BODY_LEVEL, "\nBody: " + JSON.stringify(body));
       log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(response));
@@ -253,10 +255,10 @@ exports.vehicles = function vehicles(options, callback) {
 
           data.id = data.id_s;
 
-          callback(data);
+          callback(null, data);
       } catch (e) {
           err('Error parsing vehicles response');
-          callback( undefined, e )
+          callback(e, null)
           return
       }
       log(API_RETURN_LEVEL, "\nGET request: " + "/vehicles" + " completed.");
