@@ -74,6 +74,9 @@ var portalBaseURI = process.env.TESLAJS_SERVER || portal;
 var API_CALL_LEVEL = 1;
 exports.API_CALL_LEVEL = API_CALL_LEVEL;
 
+var API_ERR_LEVEL = 1;
+exports.API_ERR_LEVEL = API_ERR_LEVEL;
+
 var API_RETURN_LEVEL = 2;
 exports.API_RETURN_LEVEL = API_RETURN_LEVEL;
 
@@ -233,6 +236,11 @@ exports.vehicles = function vehicles(options, callback) {
 
       log(API_BODY_LEVEL, "\nBody: " + JSON.stringify(body));
       log(API_RESPONSE_LEVEL, "\nResponse: " + JSON.stringify(response));
+
+      if (response.status != 200) {
+        log(API_ERR_LEVEL, response.status);
+        return callback(response.status, null);
+      }
 
       var data = {};
 
