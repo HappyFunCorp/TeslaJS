@@ -531,10 +531,10 @@ exports.remoteStart = function remoteStartDrive(options, password, callback) {
 //=====================
 // Open the trunk/frunk
 //=====================
-exports.FRUNK = "frunk";
-exports.TRUNK = "trunk";
+exports.FRUNK = "front";
+exports.TRUNK = "rear";
 exports.openTrunk = function openTrunk(options, which, callback) {
-    post_command(options, "command/trunk_open", { which_trunk: which }, callback);
+    post_command(options, "command/actuate_trunk", { which_trunk: which }, callback);
 }
 
 //===============================
