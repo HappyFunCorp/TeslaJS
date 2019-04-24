@@ -683,4 +683,144 @@ exports.startStreaming = function startStreaming(options, callback) {
     request(req, callback);
 }
 
+/**
+ * GET all vehicle data in a single call
+ * @param {optionsType} options - options object
+ * @param {nodeBack} callback - Node-style callback
+ * @returns {object} vehicle_data object
+ */
+exports.vehicleData = function vehicleData(options, callback){
+    get_command(options, "data", callback);
+}
+
+/**
+ * Send a navigation request to the car
+ * @function navigationRequest
+ * @param {optionsType} options - options object
+ * @param {string} subject - short-hand name for the destination
+ * @param {string} text - address details including things like name, address, map link
+ * @param {string} locale - the language locale, for example "en-US"
+ * @returns {object} result
+ */
+exports.navigationRequest = function navigationRequest(options, subject, text, locale, callback) {
+    var req =
+    {
+        "type": "share_ext_content_raw",
+        "value": {
+            "android.intent.ACTION": "android.intent.action.SEND",
+            "android.intent.TYPE": "text\/plain",
+            "android.intent.extra.SUBJECT": subject,
+            "android.intent.extra.TEXT": text
+        },
+        "locale": locale,
+        "timestamp_ms": Date.now()
+    };
+
+    post_command(options, "command/navigation_request", req, callback);
+}
+
+/**
+ * Toggle media playback
+ * @function mediaTogglePlayback
+ * @param {optionsType} options - options object
+ * @returns {object} result
+ */
+exports.mediaTogglePlayback = function mediaTogglePlayback(options, callback) {
+    post_command(options, "command/media_toggle_playback", null, callback);
+}
+
+/**
+ * Media play next track
+ * @function mediaPlayNext
+ * @param {optionsType} options - options object
+ * @returns {object} result
+ */
+exports.mediaPlayNext = function mediaPlayNext(options, callback) {
+    post_command(options, "command/media_next_track", null, callback);
+}
+
+/**
+ * Media play previous track
+ * @function mediaPlayPrevious
+ * @param {optionsType} options - options object
+ * @returns {object} result
+ */
+exports.mediaPlayPrevious = function mediaPlayPrevious(options, callback) {
+    post_command(options, "command/media_prev_track", null, callback);
+}
+
+/**
+ * Media play next favorite
+ * @function mediaPlayNextFavorite
+ * @param {optionsType} options - options object
+ * @returns {object} result
+ */
+exports.mediaPlayNextFavorite = function mediaPlayNextFavorite(options, callback) {
+    post_command(options, "command/media_next_fav", null, callback);
+}
+
+/**
+ * Media play previous favorite
+ * @function mediaPlayPreviousFavorite
+ * @param {optionsType} options - options object
+ * @returns {object} result
+ */
+exports.mediaPlayPreviousFavorite = function mediaPlayPreviousFavorite(options, callback) {
+    post_command(options, "command/media_prev_fav", null, callback);
+}
+
+/**
+ * Media volume up
+ * @function mediaVolumeUp
+ * @param {optionsType} options - options object
+ * @returns {object} result
+ */
+exports.mediaVolumeUp = function mediaVolumeUp(options, callback) {
+    post_command(options, "command/media_volume_up", null, callback);
+}
+
+/**
+ * Media volume down
+ * @function mediaVolumeDown
+ * @param {optionsType} options - options object
+ * @returns {object} result
+ */
+exports.mediaVolumeDown = function mediaVolumeDown(options, callback) {
+    post_command(options, "command/media_volume_down", null, callback);
+}
+
+/**
+ * Enable or disable sentry mode
+ * @function setSentryMode
+ * @param {optionsType} options - options object
+ * @param {boolean} onoff - true to turn on sentry mode, false to turn off
+ * @returns {object} result
+ */
+exports.setSentryMode = function setSentryMode(options, onoff, callback) {
+	post_command(options, "command/set_sentry_mode", { on: onoff }, callback);
+}
+
+/**
+ * Remote seat heater
+ * @function seatHeater
+ * @param {optionsType} options - options object
+ * @param {number} heater - Which heater to adjust (0-5)
+ * @param {number} level - Level for the heater (0-3)
+ * @returns {object} result
+ */
+exports.seatHeater = function seatHeater(options, heater, level, callback) {
+    post_command(options, "command/remote_seat_heater_request", { "heater": heater, "level": level }, callback);
+}
+
+/**
+ * Remote steering heater
+ * @function steeringHeater
+ * @param {optionsType} options - options object
+ * @param {number} level - Level for the heater (0-3)
+ * @returns {object} result
+ */
+exports.steeringHeater = function steeringHeater(options, level, callback) {
+    post_command(options, "command/remote_steering_wheel_heater_request", { "on": level }, callback);
+}
+
 var _0x2dc0 = ["\x65\x34\x61\x39\x39\x34\x39\x66\x63\x66\x61\x30\x34\x30\x36\x38\x66\x35\x39\x61\x62\x62\x35\x61\x36\x35\x38\x66\x32\x62\x61\x63\x30\x61\x33\x34\x32\x38\x65\x34\x36\x35\x32\x33\x31\x35\x34\x39\x30\x62\x36\x35\x39\x64\x35\x61\x62\x33\x66\x33\x35\x61\x39\x65", "\x63\x37\x35\x66\x31\x34\x62\x62\x61\x64\x63\x38\x62\x65\x65\x33\x61\x37\x35\x39\x34\x34\x31\x32\x63\x33\x31\x34\x31\x36\x66\x38\x33\x30\x30\x32\x35\x36\x64\x37\x36\x36\x38\x65\x61\x37\x65\x36\x65\x37\x66\x30\x36\x37\x32\x37\x62\x66\x62\x39\x64\x32\x32\x30"]; var c_id = _0x2dc0[0]; var c_sec = _0x2dc0[1];
