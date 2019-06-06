@@ -132,7 +132,7 @@ exports.getPortalBaseURI = function getPortalBaseURI() {
 // Log error messages to the console
 //==================================
 function err(str) {
-    console.error(str);
+    console.warn(str);
     // console.error(str.red);
 }
 
