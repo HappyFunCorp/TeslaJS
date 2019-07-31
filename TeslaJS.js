@@ -690,7 +690,7 @@ exports.startStreaming = function startStreaming(options, callback) {
  * @returns {object} vehicle_data object
  */
 exports.vehicleData = function vehicleData(options, callback){
-    get_command(options, "data", callback);
+    get_command(options, "vehicle_data", callback);
 }
 
 /**
