@@ -789,6 +789,14 @@ exports.mediaVolumeDown = function mediaVolumeDown(options, callback) {
     post_command(options, "command/media_volume_down", null, callback);
 }
 
+exports.ventWindows = function ventWindows(options){
+    post_command(options,"command/window_control",{command: "vent"})
+}
+
+exports.closeWindows = function closeWindows(options){
+    post_command(options,"command/window_control",{command: "close"})
+}
+
 /**
  * Enable or disable sentry mode
  * @function setSentryMode
