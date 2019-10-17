@@ -599,8 +599,8 @@ exports.makeCalendarEntry = function makeCalendarEntry(eventName, location, star
 //==============================
 // Trigger homelink
 //==============================
-exports.homelink = function homelink(options, lat, long, token, callback) {
-    post_command(options, "command/trigger_homelink", { lat: lat, long: long, token: token } , callback);
+exports.homelink = function homelink(options, lat, lon, token, callback) {
+    post_command(options, "command/trigger_homelink", { lat: lat, lon: lon, token: token } , callback);
 }
 
 /*
